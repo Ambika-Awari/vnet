@@ -1,0 +1,45 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  displayName: 'Run a multi-line script'
+
+- task: TerraformInstaller@0
+  inputs:
+    terraformVersion: 'latest'
+
+- task: TerraformTaskV3@3
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    backendServiceArm: 'Microsoft Azure Sponsorship (6e977b0d-998c-42d7-97ed-dd70040cff12)'
+    backendAzureRmResourceGroupName: 'vnet_backend'
+    backendAzureRmStorageAccountName: 'ventsrr'
+    backendAzureRmContainerName: 'vnetcontainer'
+    backendAzureRmKey: 'qavnet.tfstate'
+
+- task: TerraformTaskV3@3
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    environmentServiceNameAzureRM: 'Microsoft Azure Sponsorship (6e977b0d-998c-42d7-97ed-dd70040cff12)'
+
+- task: TerraformTaskV3@3
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    environmentServiceNameAzureRM: 'Microsoft Azure Sponsorship (6e977b0d-998c-42d7-97ed-dd70040cff12)'
